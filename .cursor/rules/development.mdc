@@ -1,0 +1,9 @@
+---
+alwaysApply: true
+---
+
+## Plugin `osticket-storage-gcp`
+
+- **Stack**:
+    - PHP 8.2
+    - osTicket: 1.18
