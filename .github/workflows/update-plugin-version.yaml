@@ -41,7 +41,7 @@ jobs:
         if: steps.version_check.outputs.needs_update == 'true'
         run: |
           set -euo pipefail
-          perl -0777 -pi -e "s/'version'\s*=>\s*'[^']*'/'version' =>        '$TAG_NAME'/" plugin.php
+          perl -0777 -pi -e "s/'version'\s*=>\s*'[^']*'/'version' => '$TAG_NAME'/" plugin.php
           echo "Updated version in plugin.php to: $TAG_NAME"
           cat plugin.php | grep "'version'"
 
