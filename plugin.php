@@ -1,7 +1,7 @@
 <?php
 return array(
     'id' => 'osticket:storage-gcs',
-    'version' => '1.0.0',
+    'version' => '1.0.1',
     'ost_version' => '1.17',
     'name' => 'Attachments in Google Cloud Storage',
     'author' => 'Anatoly Melnikov',
