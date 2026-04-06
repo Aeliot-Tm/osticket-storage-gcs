@@ -30,7 +30,7 @@ function usage() {
 function build() {
     echo "Building PHAR for plugin\n";
 
-    $phar_name = 'osticket-storage-gcp.phar';
+    $phar_name = 'osticket-storage-gcs.phar';
 
     // Remove existing PHAR if it exists
     if (file_exists($phar_name)) {

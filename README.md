@@ -2,7 +2,7 @@
 
 This plugin registers a **file storage backend** for osTicket so new ticket attachments (and other files stored through the same mechanism) are saved as objects in a **Google Cloud Storage** bucket instead of the database.
 
-**Plugin ID:** `osticket:storage-gcp`  
+**Plugin ID:** `osticket:storage-gcs`  
 **Backend code:** `G` (shown in the system “Store Attachments” dropdown as `Google Cloud Storage (bucket/prefix)`).
 
 ## Requirements
@@ -19,16 +19,16 @@ This plugin registers a **file storage backend** for osTicket so new ticket atta
 
 Use this when you deploy from a release asset instead of a git checkout.
 
-1. Download **`osticket-storage-gcp.phar`** from the [GitHub Releases](https://github.com/Aeliot-Tm/osticket-storage-gcs/releases) page for the version you want (the file is attached to each release after CI builds it).
-2. Copy the file to your osTicket **`include/plugins/`** directory, keeping the name **`osticket-storage-gcp.phar`** (same basename as the source folder so install paths stay predictable).
+1. Download **`osticket-storage-gcs.phar`** from the [GitHub Releases](https://github.com/Aeliot-Tm/osticket-storage-gcs/releases) page for the version you want (the file is attached to each release after CI builds it).
+2. Copy the file to your osTicket **`include/plugins/`** directory, keeping the name **`osticket-storage-gcs.phar`** (same basename as the source folder so install paths stay predictable).
 3. **Do not** run Composer in `include/plugins/` for this layout—the PHAR already contains `vendor` and `plugin.php` at the archive root.
 4. In **Admin Panel → Manage → Plugins**, add the plugin if it is not registered yet, then **enable** it and open **configuration**.
 
-If you previously used the unpacked directory under `include/plugins/osticket-storage-gcp/`, disable or remove that installation before switching to the PHAR (only one layout should exist for this plugin id), then add the PHAR-based plugin again from the plugins list if needed.
+If you previously used the unpacked directory under `include/plugins/osticket-storage-gcs/`, disable or remove that installation before switching to the PHAR (only one layout should exist for this plugin id), then add the PHAR-based plugin again from the plugins list if needed.
 
 ### From source (directory + Composer)
 
-1. Copy the plugin folder to `include/plugins/osticket-storage-gcp/` (or install from your deployment process).
+1. Copy the plugin folder to `include/plugins/osticket-storage-gcs/` (or install from your deployment process).
 2. From the plugin directory, install PHP dependencies:
 
    ```bash
@@ -38,7 +38,7 @@ If you previously used the unpacked directory under `include/plugins/osticket-st
    In Docker-based setups (example):
 
    ```bash
-   docker compose exec php-fpm sh -c 'cd /var/www/html/include/plugins/osticket-storage-gcp && composer install --no-dev'
+   docker compose exec php-fpm sh -c 'cd /var/www/html/include/plugins/osticket-storage-gcs && composer install --no-dev'
    ```
 
 3. In **Admin Panel → Manage → Plugins**, add/install the plugin if it is not already listed, then **enable** it and open its **configuration**.
@@ -86,7 +86,7 @@ If **`bk`** stays **`D`** (database) despite the plugin being enabled, the **`G`
 
 ## Troubleshooting
 
-- **`vendor/autoload.php` missing:** run `composer install` in the plugin directory (source install only). If you use the **PHAR**, ensure the file is readable under `include/plugins/osticket-storage-gcp.phar` and that the **Phar** extension is loaded.
+- **`vendor/autoload.php` missing:** run `composer install` in the plugin directory (source install only). If you use the **PHAR**, ensure the file is readable under `include/plugins/osticket-storage-gcs.phar` and that the **Phar** extension is loaded.
 - **Silent fallback to database:** osTicket may catch upload errors and try the next backend. Check PHP / osTicket logs and confirm IAM, bucket name, and credentials.
 - **Path to JSON in Docker:** use a path inside the mounted application tree (e.g. under `/var/www/html/...`) so the PHP process can read the file.
 

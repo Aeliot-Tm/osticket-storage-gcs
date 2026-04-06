@@ -1,4 +1,4 @@
-# osticket-storage-gcp plugin
+# osticket-storage-gcs plugin
 
 Extends [global `.cursor/rules/development.mdc`](../../../../.cursor/rules/development.mdc).
 

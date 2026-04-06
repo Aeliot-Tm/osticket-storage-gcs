@@ -2,7 +2,7 @@
 alwaysApply: true
 ---
 
-## Plugin `osticket-storage-gcp`
+## Plugin `osticket-storage-gcs`
 
 - **Stack**:
     - PHP 8.2

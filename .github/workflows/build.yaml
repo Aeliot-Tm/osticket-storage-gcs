@@ -70,7 +70,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
-            const pharPath = 'osticket-storage-gcp.phar';
+            const pharPath = 'osticket-storage-gcs.phar';
             if (!fs.existsSync(pharPath)) {
               throw new Error(`PHAR file not found: ${pharPath}`);
             }
@@ -82,7 +82,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: releaseId,
-              name: 'osticket-storage-gcp.phar',
+              name: 'osticket-storage-gcs.phar',
               data: pharContent,
               headers: {
                 'content-type': 'application/octet-stream',
