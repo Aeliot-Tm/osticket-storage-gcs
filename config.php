@@ -2,6 +2,12 @@
 
 class GcsStoragePluginConfig extends PluginConfig {
 
+    /**
+     * Length of a UTC day in seconds; used when signed-url-ttl is unset to align
+     * link expiry with the next midnight UTC (same pattern as core file URLs).
+     */
+    const SIGNED_URL_END_OF_UTC_DAY_PERIOD_SECONDS = 86400;
+
     function getOptions() {
         return array(
             'bucket' => new TextboxField(array(
@@ -31,11 +37,12 @@ class GcsStoragePluginConfig extends PluginConfig {
             'signed-url-ttl' => new TextboxField(array(
                 'required' => false,
                 'label' => __('Default signed URL lifetime (seconds)'),
-                'hint' => __('Leave empty to expire signed download URLs at midnight UTC (same idea as the S3 plugin). If set, used when osTicket does not pass a shorter TTL.'),
+                'default' => (string) self::SIGNED_URL_END_OF_UTC_DAY_PERIOD_SECONDS,
+                'hint' => sprintf(
+                    /* Translators: %d is the default TTL in seconds (one day). */
+                    __('Seconds until signed download URLs expire when osTicket does not pass a shorter TTL. Default: %d. Leave empty to expire at the next midnight UTC instead.'),
+                    self::SIGNED_URL_END_OF_UTC_DAY_PERIOD_SECONDS),
                 'configuration' => array('size' => 8, 'length' => 10),
-            )),
-            'access-info' => new SectionBreakField(array(
-                'label' => __('Credentials'),
             )),
         );
     }
@@ -56,7 +63,7 @@ class GcsStoragePluginConfig extends PluginConfig {
             $clientOpts,
             $credErr,
         ] = GcsStorageBackend::credentialsToClientOptions($config['service-account-json'] ?? '');
-        
+
         if ($credErr !== null) {
             $this->getForm()->getField('service-account-json')->addError($credErr);
             return false;
@@ -79,7 +86,7 @@ class GcsStoragePluginConfig extends PluginConfig {
                 $e->getMessage());
             return false;
         }
-        
+
         return true;
     }
 }

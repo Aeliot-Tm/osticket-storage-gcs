@@ -195,7 +195,8 @@ class GcsStorageBackend extends FileStorageBackend {
         $cfgTtl = (int) static::getPluginConfig()->get('signed-url-ttl', 0);
         if ($cfgTtl > 0)
             return $now + $cfgTtl;
-        return $now + 86400 - ($now % 86400);
+        $day = GcsStoragePluginConfig::SIGNED_URL_END_OF_UTC_DAY_PERIOD_SECONDS;
+        return $now + $day - ($now % $day);
     }
 
     protected function getObject() {
