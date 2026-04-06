@@ -1,0 +1,11 @@
+{
+    "name": "osticket/storage-gcp",
+    "description": "osTicket plugin: Google Cloud Storage backend",
+    "require": {
+        "php": ">=8.0",
+        "google/cloud-storage": "^1.42"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
