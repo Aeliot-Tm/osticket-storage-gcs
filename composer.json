@@ -1,6 +1,7 @@
 {
     "name": "osticket/storage-gcs",
     "description": "osTicket plugin: Google Cloud Storage backend",
+    "license": "GPL-2.0-only",
     "require": {
         "php": ">=8.0",
         "google/cloud-storage": "^1.42"
