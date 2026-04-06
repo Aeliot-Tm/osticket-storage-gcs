@@ -5,8 +5,10 @@ if (is_file(__DIR__ . '/vendor/autoload.php')) {
 }
 require_once __DIR__ . '/config.php';
 
+use Google\Auth\HttpHandler\HttpHandlerFactory;
 use Google\Cloud\Core\Exception\NotFoundException;
 use Google\Cloud\Storage\StorageClient;
+use GuzzleHttp\Client;
 
 class GcsStorageBackend extends FileStorageBackend {
 
@@ -43,6 +45,61 @@ class GcsStorageBackend extends FileStorageBackend {
     /** @return PluginConfig */
     static function getPluginConfig() {
         return static::$__config;
+    }
+
+    /**
+     * True when this plugin file is loaded from a PHAR (osTicket supports plugins as .phar).
+     * Phar::running() is often empty when the archive is only included, not executed via the stub.
+     */
+    protected static function isPluginCodeRunningFromPhar() {
+        if (strncmp(__DIR__, 'phar://', 7) === 0)
+            return true;
+        if (class_exists('Phar', false) && Phar::running(false) !== '')
+            return true;
+        return false;
+    }
+
+    /**
+     * Use a host CA bundle path so HTTPS from Guzzle/cURL does not depend on code living inside a PHAR.
+     */
+    protected static function preferredSslCaBundlePath() {
+        $paths = array();
+        if (function_exists('openssl_get_cert_locations')) {
+            $loc = @openssl_get_cert_locations();
+            if (is_array($loc)) {
+                if (!empty($loc['default_cert_file']))
+                    $paths[] = $loc['default_cert_file'];
+                if (!empty($loc['default_cert_dir']))
+                    $paths[] = $loc['default_cert_dir'];
+            }
+        }
+        $paths = array_merge($paths, array(
+            '/etc/ssl/certs/ca-certificates.crt',
+            '/etc/pki/tls/certs/ca-bundle.crt',
+            '/usr/local/share/certs/ca-root-nss.crt',
+            '/var/lib/ca-certificates/ca-bundle.pem',
+        ));
+        foreach ($paths as $p) {
+            if ($p && is_string($p) && is_readable($p))
+                return $p;
+        }
+        return null;
+    }
+
+    /**
+     * Configure Guzzle used by google/cloud-storage for PHAR installs (fixes broken TLS/CA in some environments).
+     */
+    protected static function applyPharFriendlyHttpOptions(array &$opts) {
+        if (!static::isPluginCodeRunningFromPhar())
+            return;
+        $ca = static::preferredSslCaBundlePath();
+        if ($ca === null)
+            return;
+        if (!empty($opts['httpHandler']) || !empty($opts['authHttpHandler']))
+            return;
+        $guzzle = array('verify' => $ca);
+        $opts['httpHandler'] = HttpHandlerFactory::build(new Client($guzzle));
+        $opts['authHttpHandler'] = HttpHandlerFactory::build(new Client($guzzle));
     }
 
     /**
@@ -104,6 +161,7 @@ class GcsStorageBackend extends FileStorageBackend {
                 $cfg->get('service-account-json', ''));
             if ($err)
                 throw new RuntimeException($err);
+            static::applyPharFriendlyHttpOptions($opts);
             $this->_client = new StorageClient($opts);
         }
         return $this->_client;

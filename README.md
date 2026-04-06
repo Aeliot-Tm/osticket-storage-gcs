@@ -89,6 +89,9 @@ If **`bk`** stays **`D`** (database) despite the plugin being enabled, the **`G`
 - **`vendor/autoload.php` missing:** run `composer install` in the plugin directory (source install only). If you use the **PHAR**, ensure the file is readable under `include/plugins/osticket-storage-gcs.phar` and that the **Phar** extension is loaded.
 - **Silent fallback to database:** osTicket may catch upload errors and try the next backend. Check PHP / osTicket logs and confirm IAM, bucket name, and credentials.
 - **Path to JSON in Docker:** use a path inside the mounted application tree (e.g. under `/var/www/html/...`) so the PHP process can read the file.
+- **Plain “File not found” after saving a reply with an attachment (PHAR install):** osTicket reads file bytes over HTTPS for mail and other paths;
+  the plugin forces a **host CA bundle** for Guzzle when code runs from a PHAR. If it still fails, set `openssl.cafile` (or `curl.cainfo`) in `php.ini`
+  to your system bundle (e.g. `/etc/ssl/certs/ca-certificates.crt` on Debian/Ubuntu).
 
 ## License
 
