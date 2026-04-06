@@ -10,9 +10,23 @@ This plugin registers a **file storage backend** for osTicket so new ticket atta
 - osTicket **1.17+** (see `ost_version` in `plugin.php`).
 - PHP **8.0+** with extensions required by `google/cloud-storage` (e.g. JSON, OpenSSL).
 - A GCS **bucket** and a **Google Cloud service account** key (JSON) with appropriate permissions (see below).
-- Composer dependencies installed in this directory (`vendor/autoload.php` must exist or the plugin will not register the storage backend on bootstrap).
+- Composer dependencies installed in this directory (`vendor/autoload.php` must exist or the plugin will not register the storage backend on bootstrap), **unless** you use the pre-built **PHAR** release (dependencies are bundled inside the archive).
+- PHP **Phar** support (`ext-phar`) enabled if you install from a `.phar` file.
 
 ## Installation
+
+### From PHAR (GitHub release)
+
+Use this when you deploy from a release asset instead of a git checkout.
+
+1. Download **`osticket-storage-gcp.phar`** from the [GitHub Releases](https://github.com/Aeliot-Tm/osticket-storage-gcs/releases) page for the version you want (the file is attached to each release after CI builds it).
+2. Copy the file to your osTicket **`include/plugins/`** directory, keeping the name **`osticket-storage-gcp.phar`** (same basename as the source folder so install paths stay predictable).
+3. **Do not** run Composer in `include/plugins/` for this layout—the PHAR already contains `vendor` and `plugin.php` at the archive root.
+4. In **Admin Panel → Manage → Plugins**, add the plugin if it is not registered yet, then **enable** it and open **configuration**.
+
+If you previously used the unpacked directory under `include/plugins/osticket-storage-gcp/`, disable or remove that installation before switching to the PHAR (only one layout should exist for this plugin id), then add the PHAR-based plugin again from the plugins list if needed.
+
+### From source (directory + Composer)
 
 1. Copy the plugin folder to `include/plugins/osticket-storage-gcp/` (or install from your deployment process).
 2. From the plugin directory, install PHP dependencies:
@@ -72,7 +86,7 @@ If **`bk`** stays **`D`** (database) despite the plugin being enabled, the **`G`
 
 ## Troubleshooting
 
-- **`vendor/autoload.php` missing:** run `composer install` in the plugin directory.
+- **`vendor/autoload.php` missing:** run `composer install` in the plugin directory (source install only). If you use the **PHAR**, ensure the file is readable under `include/plugins/osticket-storage-gcp.phar` and that the **Phar** extension is loaded.
 - **Silent fallback to database:** osTicket may catch upload errors and try the next backend. Check PHP / osTicket logs and confirm IAM, bucket name, and credentials.
 - **Path to JSON in Docker:** use a path inside the mounted application tree (e.g. under `/var/www/html/...`) so the PHP process can read the file.
 
