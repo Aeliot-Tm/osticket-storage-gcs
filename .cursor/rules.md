@@ -6,7 +6,7 @@ Extends [global `.cursor/rules/development.mdc`](../../../../.cursor/rules/devel
 
 - Do not modify osTicket core for this plugin; see **Plugin development vs core changes**
   in the global [development.mdc](../../../../.cursor/rules/development.mdc) (core edits only if the user explicitly asks).
-- PHP 8.2 compatible code; comments and log messages in English.
+- PHP 8.1+ compatible code (see `composer.json`); comments and log messages in English.
 - At most one consecutive blank line in source files.
 - After `composer install`, dependencies live under `vendor/` (Composer default). Do not hand-edit generated files in `vendor/`.
 

@@ -3,10 +3,13 @@
     "description": "osTicket plugin: Google Cloud Storage backend",
     "license": "GPL-2.0-only",
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "google/cloud-storage": "^1.42"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "platform": {
+            "php": "8.1.26"
+        }
     }
 }
